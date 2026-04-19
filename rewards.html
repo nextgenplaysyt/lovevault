@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rewards</title>
+
+  <!-- Mobile support -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+
+<header>
+  <button onclick="goTo('home.html')">⬅ Back</button>
+  <h1>🎁 Rewards</h1>
+  <div>🪙 <span id="coinCount">0</span></div>
+</header>
+
+<main>
+
+  <!-- Request Form -->
+  <div class="card">
+    <h3>Request a Reward 💌</h3>
+
+    <input id="reqName" placeholder="What do you want?">
+    <input id="reqCost" type="number" placeholder="How many coins?">
+
+    <button onclick="sendRequest()">Send Request</button>
+  </div>
+
+  <!-- Requests List -->
+  <div class="card">
+    <h3>Your Requests</h3>
+
+    <div id="userRequests">
+      <p style="opacity:0.6;">No requests yet...</p>
+    </div>
+  </div>
+
+</main>
+
+<!-- JS -->
+<script src="./app.js"></script>
+
+</body>
+</html>

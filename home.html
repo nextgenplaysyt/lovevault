@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Home</title>
+
+  <!-- Mobile scaling -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+
+<header class="center">
+  <div class="logo">💑</div>
+  <h1>LoveVault 💎</h1>
+  <p id="greeting">Hi ❤️</p>
+</header>
+
+<main>
+
+  <div class="card nav" onclick="goTo('message.html')">
+    💌 Messages
+  </div>
+
+  <div class="card nav" onclick="goTo('game.html')">
+    🎮 Game
+  </div>
+
+  <div class="card nav" onclick="goTo('rewards.html')">
+    🎁 Rewards
+  </div>
+
+</main>
+
+<!-- JS -->
+<script src="./app.js"></script>
+
+<script>
+  try {
+    let user = JSON.parse(localStorage.getItem("userData"));
+    if (user && user.username) {
+      document.getElementById("greeting").innerText = "Hi " + user.username + " ❤️";
+    }
+  } catch (e) {
+    document.getElementById("greeting").innerText = "Hi ❤️";
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel</title>
+
+  <!-- Mobile support -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+
+<header>
+  <button onclick="goTo('index.html')">⬅ Logout</button>
+  <h1>🛠 Admin Panel</h1>
+</header>
+
+<main>
+
+  <div class="card nav" onclick="goTo('admin-messages.html')">
+    📅 Daily Messages
+  </div>
+
+  <div class="card nav" onclick="goTo('admin-requests.html')">
+    📩 Requests
+  </div>
+
+</main>
+
+<!-- JS -->
+<script src="./app.js"></script>
+
+</body>
+</html>

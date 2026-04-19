@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Game</title>
+
+  <!-- Mobile support -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+
+<header>
+  <button onclick="goTo('home.html')">⬅ Back</button>
+  <h1>🎮 Game</h1>
+  <div>🪙 <span id="coinCount">0</span></div>
+</header>
+
+<main>
+
+  <div class="card center">
+    <canvas id="gameCanvas"></canvas>
+
+    <h3>Score: <span id="score">0</span></h3>
+
+    <button onclick="startGame()">Start Game</button>
+  </div>
+
+</main>
+
+<!-- JS -->
+<script src="./app.js"></script>
+
+</body>
+</html>
