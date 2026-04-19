@@ -67,28 +67,21 @@ async function sendRequest() {
 
   if (!name || !cost) return notify("Fill all fields");
 
-  try {
-    await db.collection("requests").add({
-      name,
-      cost,
-      status: "pending",
-      time: Date.now()
-    });
+  await db.collection("requests").add({
+    name,
+    cost,
+    status: "pending",
+    time: Date.now()
+  });
 
-    notify("Request sent 💌");
-    loadUserRequests();
-  } catch (e) {
-    console.error(e);
-    notify("Error ❌");
-  }
+  notify("Request sent 💌");
+  loadUserRequests();
 }
 
 // ===== USER REQUESTS =====
 async function loadUserRequests() {
   let container = el("userRequests");
   if (!container) return;
-
-  container.innerHTML = "Loading...";
 
   let snapshot = await db.collection("requests").orderBy("time", "desc").get();
 
@@ -126,8 +119,6 @@ async function cancelRequest(id) {
 async function loadAdminRequests() {
   let container = el("adminRequests");
   if (!container) return;
-
-  container.innerHTML = "Loading...";
 
   let snapshot = await db.collection("requests").orderBy("time", "desc").get();
 
@@ -170,18 +161,27 @@ async function approveRequest(id) {
     status: "approved"
   });
 
-  loadAdminRequests();
   notify("Approved ✅");
+  loadAdminRequests();
 }
 
 // ===== COMPLETE =====
 async function completeRequest(id) {
+  let doc = await db.collection("requests").doc(id).get();
+  let cost = doc.data().cost;
+
+  let coins = await getCoins();
+  coins -= parseInt(cost);
+
+  await setCoins(coins);
+
   await db.collection("requests").doc(id).update({
     status: "completed"
   });
 
   notify("Completed ✔");
   loadAdminRequests();
+  loadCoins();
 }
 
 // ===== DELETE =====
@@ -191,22 +191,23 @@ async function deleteRequest(id) {
 }
 
 //
-// ===================== KEEP LOCAL FEATURES FOR NOW =====================
+// ===================== FIREBASE MESSAGES =====================
 //
 
-// ===== DAILY MESSAGE (still local for now) =====
-function showMessage() {
+// ===== SHOW MESSAGE =====
+async function showMessage() {
   let today = new Date().toISOString().split("T")[0];
-  let messages = JSON.parse(localStorage.getItem("dailyMessages"));
 
-  let msg = messages[today];
+  let doc = await db.collection("dailyMessages").doc(today).get();
 
   if (!el("dailyMessage")) return;
 
-  if (!msg) {
+  if (!doc.exists) {
     el("dailyMessage").innerText = "No message today 💭";
     return;
   }
+
+  let msg = doc.data();
 
   el("dailyMessage").innerHTML = `
     ${msg.text}<br>
@@ -224,17 +225,13 @@ function saveDailyMessage() {
 
   let reader = new FileReader();
 
-  reader.onload = function () {
-    let messages = JSON.parse(localStorage.getItem("dailyMessages"));
-
-    messages[date] = {
+  reader.onload = async function () {
+    await db.collection("dailyMessages").doc(date).set({
       text,
       image: reader.result || null
-    };
+    });
 
-    localStorage.setItem("dailyMessages", JSON.stringify(messages));
-
-    if (el("msgStatus")) el("msgStatus").innerText = "Saved ✅";
+    el("msgStatus").innerText = "Saved ✅";
     loadSavedMessages();
   };
 
@@ -243,27 +240,25 @@ function saveDailyMessage() {
 }
 
 // ===== LOAD SAVED =====
-function loadSavedMessages() {
+async function loadSavedMessages() {
   let container = el("savedMessages");
   if (!container) return;
 
-  let messages = JSON.parse(localStorage.getItem("dailyMessages"));
+  let snapshot = await db.collection("dailyMessages").get();
 
-  let keys = Object.keys(messages);
-
-  if (keys.length === 0) {
+  if (snapshot.empty) {
     container.innerHTML = "<p style='opacity:0.6;'>No messages yet...</p>";
     return;
   }
 
   container.innerHTML = "";
 
-  keys.forEach(date => {
-    let m = messages[date];
+  snapshot.forEach(doc => {
+    let m = doc.data();
 
     container.innerHTML += `
       <div class="card">
-        <strong>${date}</strong><br>
+        <strong>${doc.id}</strong><br>
         ${m.text}<br>
         ${m.image ? `<img src="${m.image}" width="100">` : ""}
       </div>
@@ -271,7 +266,42 @@ function loadSavedMessages() {
   });
 }
 
-// ===== FIREBASE TEST =====
+//
+// ===================== FIREBASE COINS =====================
+//
+
+// ===== GET COINS =====
+async function getCoins() {
+  let doc = await db.collection("coins").doc("main").get();
+
+  if (!doc.exists) {
+    await db.collection("coins").doc("main").set({ value: 0 });
+    return 0;
+  }
+
+  return doc.data().value;
+}
+
+// ===== SET COINS =====
+async function setCoins(value) {
+  await db.collection("coins").doc("main").set({
+    value
+  });
+}
+
+// ===== LOAD COINS =====
+async function loadCoins() {
+  let coinEl = el("coinCount");
+  if (!coinEl) return;
+
+  let coins = await getCoins();
+  coinEl.innerText = coins;
+}
+
+//
+// ===================== TEST =====================
+//
+
 async function testFirebase() {
   try {
     await db.collection("test").add({
@@ -285,10 +315,11 @@ async function testFirebase() {
 }
 
 // ===== AUTO LOAD =====
-window.onload = function () {
+window.onload = async function () {
 
   testFirebase();
 
+  await loadCoins();
   loadUserRequests();
   loadAdminRequests();
   loadSavedMessages();
