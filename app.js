@@ -261,14 +261,34 @@ async function loadSavedMessages() {
 
       container.innerHTML += `
         <div class="card">
-          <strong>${doc.id}</strong><br><br>
-          ${msg.text}
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong>${doc.id}</strong>
+            <button onclick="deleteMessage('${doc.id}')">🗑</button>
+          </div>
+
+          <p>${msg.text}</p>
         </div>
       `;
     });
 
   } catch (e) {
     console.error("Load error:", e);
+  }
+}
+
+async function deleteMessage(id) {
+  if (!confirm("Delete this message?")) return;
+
+  try {
+    await db.collection("dailyMessages").doc(id).delete();
+
+    notify("Deleted 🗑");
+
+    loadSavedMessages(); // refresh UI
+
+  } catch (e) {
+    console.error(e);
+    notify("Delete failed ❌");
   }
 }
 
