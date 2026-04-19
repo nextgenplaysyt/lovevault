@@ -69,18 +69,29 @@ body {
 .nav-link {
   cursor: pointer;
   opacity: 0.8;
-  transition: 0.2s;
+  transition: all 0.25s ease;
+  will-change: transform;
 }
 
 .nav-link:hover {
   opacity: 1;
   color: gold;
+  text-shadow: 0 0 8px gold;
+  transform: translateY(-1px);
 }
 
 .nav-link.active {
   color: gold;
   font-weight: bold;
   position: relative;
+}
+
+.nav-link:active {
+  transform: scale(0.95) translateY(0);
+}
+
+.nav-link.active:hover {
+  text-shadow: 0 0 12px gold;
 }
 
 .nav-link.active::after {
