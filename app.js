@@ -18,7 +18,9 @@ async function login() {
   try {
     let userCred = await auth.signInWithEmailAndPassword(email, password);
 
-    if (userCred.user.email === "nextgenplaysyt@gmail.com") {
+    let loggedEmail = userCred.user.email.trim().toLowerCase();
+
+    if (loggedEmail === "nextgenplaysyt@gmail.com") {
       goTo("admin.html");
     } else {
       goTo("home.html");
@@ -26,6 +28,7 @@ async function login() {
 
   } catch (e) {
     notify("Login failed ❌");
+    console.error(e);
   }
 }
 
