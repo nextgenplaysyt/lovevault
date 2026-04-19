@@ -5,36 +5,28 @@ html, body {
   height: 100%;
 }
 
-header button {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: white;
-  padding: 6px 14px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: 0.25s ease;
-  backdrop-filter: blur(8px);
-}
-
-/* Hover effect */
-header button:hover {
-  background: rgba(255,255,255,0.1);
-  border-color: gold;
-  box-shadow: 0 0 10px rgba(255,215,0,0.3);
-  transform: translateY(-1px);
-}
-
-/* Click effect */
-header button:active {
-  transform: scale(0.95);
-}
-
 /* ===== BASE ===== */
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #0f172a, #1e293b, #020617);
+
+  background: radial-gradient(circle at top, #0f172a, #020617);
+  background-attachment: fixed;
+
   color: white;
   overflow-x: hidden;
+
+  animation: fadePage 0.5s ease;
+}
+
+/* Background glow layer */
+body::before {
+  content: "";
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 20% 20%, rgba(255,215,0,0.08), transparent 40%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* ===== NAVBAR ===== */
@@ -46,11 +38,15 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   padding: 15px 20px;
 
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(12px);
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(14px);
+
   border-bottom: 1px solid rgba(255,255,255,0.08);
+
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
 
   animation: slideDown 0.4s ease;
 }
@@ -66,11 +62,13 @@ body {
   align-items: center;
 }
 
+/* ===== NAV LINKS ===== */
 .nav-link {
   cursor: pointer;
   opacity: 0.8;
   transition: all 0.25s ease;
   will-change: transform;
+  position: relative;
 }
 
 .nav-link:hover {
@@ -80,18 +78,13 @@ body {
   transform: translateY(-1px);
 }
 
-.nav-link.active {
-  color: gold;
-  font-weight: bold;
-  position: relative;
-}
-
 .nav-link:active {
   transform: scale(0.95) translateY(0);
 }
 
-.nav-link.active:hover {
-  text-shadow: 0 0 12px gold;
+.nav-link.active {
+  color: gold;
+  font-weight: bold;
 }
 
 .nav-link.active::after {
@@ -105,7 +98,34 @@ body {
   box-shadow: 0 0 8px gold;
 }
 
-/* ===== LOGIN CONTAINER ===== */
+.nav-link.active:hover {
+  text-shadow: 0 0 12px gold;
+}
+
+/* ===== HEADER BUTTON (LOGOUT) ===== */
+header button {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.25s ease;
+  backdrop-filter: blur(8px);
+}
+
+header button:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: gold;
+  box-shadow: 0 0 10px rgba(255,215,0,0.3);
+  transform: translateY(-1px);
+}
+
+header button:active {
+  transform: scale(0.95);
+}
+
+/* ===== LOGIN ===== */
 .login-screen {
   min-height: 100vh;
   display: flex;
@@ -116,7 +136,6 @@ body {
 }
 
 /* ===== INPUTS ===== */
-/* Text inputs only */
 input[type="text"],
 input[type="password"],
 input[type="number"],
@@ -125,7 +144,7 @@ textarea {
   border-radius: 12px;
   border: none;
   outline: none;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.08);
   color: white;
   width: 260px;
   transition: 0.3s;
@@ -144,61 +163,64 @@ input:focus, textarea:focus {
 button {
   padding: 12px 18px;
   border-radius: 12px;
-  border: none;
-  background: linear-gradient(45deg, #60a5fa, #818cf8);
+  border: 1px solid rgba(255,255,255,0.15);
+
+  background: rgba(255,255,255,0.05);
   color: white;
-  font-weight: bold;
+
   cursor: pointer;
-  transition: 0.3s;
-  width: 260px;
+  transition: all 0.25s ease;
 }
 
 button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 12px rgba(96,165,250,0.6);
+  background: rgba(255,255,255,0.1);
+  border-color: gold;
+  box-shadow: 0 0 10px rgba(255,215,0,0.3);
 }
 
-/* ===== REMEMBER ME (FIXED + SPACING) ===== */
+/* ===== REMEMBER ===== */
 .remember {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: white;
-  margin-top: -5px; /* 👈 your tweak added */
-}
-
-/* ===== HEADER ===== */
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px;
-  background: rgba(255,255,255,0.06);
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin-top: -5px;
 }
 
 /* ===== MAIN ===== */
 main {
-  padding: 20px;
+  padding: 25px;
   display: grid;
   gap: 20px;
 }
 
 /* ===== CARDS ===== */
 .card {
-  background: rgba(255,255,255,0.08);
+  position: relative;
+  z-index: 1;
+
+  background: rgba(255,255,255,0.04);
   padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 0 20px rgba(96,165,250,0.08);
-  transition: 0.3s;
+  border-radius: 16px;
+
+  backdrop-filter: blur(14px);
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  box-shadow:
+    0 0 20px rgba(0,0,0,0.4),
+    inset 0 0 10px rgba(255,255,255,0.02);
+
+  transition: all 0.3s ease;
 }
 
 .card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 0 20px rgba(96,165,250,0.25);
+  transform: translateY(-6px) scale(1.01);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.6),
+    0 0 20px rgba(255,215,0,0.15);
 }
 
-/* ===== NAV ===== */
+/* ===== NAV CARDS ===== */
 .nav {
   cursor: pointer;
   text-align: center;
@@ -238,7 +260,7 @@ canvas {
   box-shadow: 0 0 15px rgba(96,165,250,0.4);
 }
 
-/* Toggle Switch */
+/* ===== TOGGLE SWITCH ===== */
 .switch {
   position: relative;
   display: inline-block;
@@ -248,8 +270,6 @@ canvas {
 
 .switch input {
   opacity: 0;
-  width: 0;
-  height: 0;
 }
 
 .slider {
@@ -285,6 +305,7 @@ input:checked + .slider:before {
   transform: translateX(24px);
 }
 
+/* ===== ANIMATIONS ===== */
 @keyframes slideDown {
   from {
     transform: translateY(-100%);
@@ -293,6 +314,17 @@ input:checked + .slider:before {
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+@keyframes fadePage {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
