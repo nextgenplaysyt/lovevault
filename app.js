@@ -268,15 +268,26 @@ async function loadCoins() {
 //
 
 async function toggleRegistration() {
-  let doc = await db.collection("settings").doc("config").get();
+  try {
+    let ref = db.collection("settings").doc("config");
 
-  let current = doc.exists ? doc.data().allowRegister : true;
+    let doc = await ref.get();
 
-  await db.collection("settings").doc("config").set({
-    allowRegister: !current
-  });
+    let current = doc.exists ? doc.data().allowRegister : true;
 
-  notify("Registration " + (!current ? "enabled ✅" : "disabled ❌"));
+    let newValue = !current;
+
+    await ref.set({
+      allowRegister: newValue
+    });
+
+    console.log("🔥 Registration now:", newValue);
+    notify("Registration " + (newValue ? "enabled ✅" : "disabled ❌"));
+
+  } catch (e) {
+    console.error("❌ Toggle error:", e);
+    notify("Toggle failed ❌");
+  }
 }
 
 async function loadUsers() {
