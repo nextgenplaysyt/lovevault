@@ -38,10 +38,10 @@
 
     <input type="date" id="msgDate">
 
-    <textarea id="msgText" placeholder="Write your message here..."></textarea>
+    <textarea id="msgText" placeholder="Write your message here..." oninput="updatePreview()"></textarea>
 
     <label style="opacity:0.7;">Optional Image</label>
-    <input type="file" id="msgImage">
+    <input type="file" id="msgImage" onchange="updatePreview()">
 
     <button onclick="saveDailyMessage()">Save Message</button>
 
