@@ -326,6 +326,32 @@ input:checked + .slider:before {
   transform: scale(0.9);
 }
 
+/* Message Card Layout */
+.message-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.msg-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.msg-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.msg-img {
+  width: 100%;
+  max-width: 250px;
+  border-radius: 10px;
+  margin-top: 5px;
+}
+
 /* ===== ANIMATIONS ===== */
 @keyframes slideDown {
   from {
