@@ -244,6 +244,16 @@ async function loadCoins() {
   coinEl.innerText = coins;
 }
 
+async function checkRegisterAllowed() {
+  let users = await auth.fetchSignInMethodsForEmail("test@gmail.com");
+
+  let btn = document.getElementById("registerBtn");
+
+  if (btn && users.length > 0) {
+    btn.style.display = "none";
+  }
+}
+
 // ===== LOAD =====
 window.onload = async function () {
   loadCoins();
