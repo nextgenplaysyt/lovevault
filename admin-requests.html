@@ -12,10 +12,18 @@
 
 <body>
 
-<header>
-  <button onclick="goTo('admin.html')">⬅ Back</button>
-  <h1>📩 Requests</h1>
-</header>
+<div class="navbar">
+
+  <div class="nav-left">🛠 Admin Panel</div>
+
+  <div class="nav-right">
+    <span class="nav-link" onclick="goTo('admin.html')">Dashboard</span>
+    <span class="nav-link" onclick="goTo('admin-messages.html')">Messages</span>
+    <span class="nav-link" onclick="goTo('admin-requests.html')">Requests</span>
+    <button onclick="logout()">🚪</button>
+  </div>
+
+</div>
 
 <main>
 
