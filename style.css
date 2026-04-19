@@ -37,6 +37,39 @@ body {
   overflow-x: hidden;
 }
 
+/* ===== NAVBAR ===== */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.nav-left {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.nav-right {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.nav-link {
+  cursor: pointer;
+  opacity: 0.8;
+  transition: 0.2s;
+}
+
+.nav-link:hover {
+  opacity: 1;
+  color: gold;
+}
+
 /* ===== LOGIN CONTAINER ===== */
 .login-screen {
   min-height: 100vh;
