@@ -219,24 +219,27 @@ async function showMessage() {
   `;
 }
 
-function saveDailyMessage() {
-  let date = el("msgDate")?.value;
-  let text = el("msgText")?.value;
-  let file = el("msgImage")?.files[0];
+async function saveDailyMessage() {
+  let date = document.getElementById("msgDate").value;
+  let text = document.getElementById("msgText").value;
 
-  let reader = new FileReader();
+  if (!date || !text) {
+    notify("Enter date & message ❌");
+    return;
+  }
 
-  reader.onload = async function () {
+  try {
     await db.collection("dailyMessages").doc(date).set({
-      text,
-      image: reader.result || null
+      text: text,
+      time: Date.now()
     });
 
-    notify("Saved ✅");
-  };
+    notify("Message saved ✅");
 
-  if (file) reader.readAsDataURL(file);
-  else reader.onload();
+  } catch (e) {
+    console.error(e);
+    notify("Error saving ❌");
+  }
 }
 
 //
