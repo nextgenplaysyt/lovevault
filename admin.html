@@ -16,15 +16,26 @@
 <main>
 
 <div class="card nav" onclick="goTo('admin-messages.html')">
-📅 Daily Messages
+  📅 Daily Messages
 </div>
 
 <div class="card nav" onclick="goTo('admin-requests.html')">
-📩 Requests
+  📩 Requests
+</div>
+
+<!-- 🔒 Registration Control -->
+<div class="card">
+  <h3>🔒 Registration Control</h3>
+  <button onclick="toggleRegistration()">Toggle Registration</button>
+</div>
+
+<!-- 👥 Users -->
+<div class="card">
+  <h3>👥 Users</h3>
+  <div id="adminUsers"></div>
 </div>
 
 </main>
-
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -34,12 +45,12 @@
 <script src="./firebase.js"></script>
 <script src="./app.js"></script>
 
-<!-- 🔐 ADMIN PROTECTION -->
+<!-- 🔐 ADMIN PROTECTION (NO FLICKER) -->
 <script>
 document.body.style.display = "none";
 
 auth.onAuthStateChanged(user => {
-  if (!user || user.email !== "nextgenplaysyt@gmail.com") {
+  if (!user || user.email.trim().toLowerCase() !== "nextgenplaysyt@gmail.com") {
     window.location.href = "index.html";
   } else {
     document.body.style.display = "block";
