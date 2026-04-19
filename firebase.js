@@ -1,4 +1,4 @@
-// Your Firebase configuration
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCrUnJH7u5HjSMMZNCIB8eAYTiwtzfWXFQ",
   authDomain: "lovevault-e5af0.firebaseapp.com",
@@ -8,8 +8,9 @@ const firebaseConfig = {
   appId: "1:82414783390:web:d991818db092e4f873e48f"
 };
 
-// Initialize Firebase (compat version)
+// Init Firebase
 firebase.initializeApp(firebaseConfig);
 
-// Initialize Firestore
+// Services
 const db = firebase.firestore();
+const auth = firebase.auth();
