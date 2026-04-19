@@ -263,7 +263,9 @@ async function loadSavedMessages() {
         <div class="card">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <strong>${doc.id}</strong>
-            <button onclick="deleteMessage('${doc.id}')">🗑</button>
+            <button class="delete-btn" onclick="deleteMessage('${doc.id}')">
+              🗑
+            </button>
           </div>
 
           <p>${msg.text}</p>
