@@ -219,6 +219,31 @@ async function showMessage() {
   `;
 }
 
+function updatePreview() {
+  let text = document.getElementById("msgText").value;
+  let file = document.getElementById("msgImage").files[0];
+  let preview = document.getElementById("previewBox");
+
+  if (!text && !file) {
+    preview.innerHTML = "Nothing to preview";
+    return;
+  }
+
+  let html = `<p>${text}</p>`;
+
+  if (file) {
+    let reader = new FileReader();
+
+    reader.onload = function () {
+      preview.innerHTML = html + `<img src="${reader.result}" class="msg-img">`;
+    };
+
+    reader.readAsDataURL(file);
+  } else {
+    preview.innerHTML = html;
+  }
+}
+
 async function saveDailyMessage() {
   let date = document.getElementById("msgDate").value;
   let text = document.getElementById("msgText").value;
@@ -277,7 +302,10 @@ async function loadSavedMessages() {
 
           <div class="msg-header">
             <strong>${doc.id}</strong>
-            <button class="delete-btn" onclick="deleteMessage('${doc.id}')">🗑</button>
+            <div>
+              <button class="edit-btn" onclick="editMessage('${doc.id}', \`${msg.text}\`)">✏️</button>
+              <button class="delete-btn" onclick="deleteMessage('${doc.id}')">🗑</button>
+            </div>
           </div>
 
           <div class="msg-body">
@@ -298,6 +326,15 @@ async function loadSavedMessages() {
     console.error("Error loading messages:", e);
     container.innerHTML = "<p style='color:red;'>Error loading messages</p>";
   }
+}
+
+function editMessage(date, text) {
+  document.getElementById("msgDate").value = date;
+  document.getElementById("msgText").value = text;
+
+  updatePreview();
+
+  notify("Editing message ✏️");
 }
 
 async function deleteMessage(id) {
