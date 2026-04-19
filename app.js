@@ -222,24 +222,34 @@ async function showMessage() {
 async function saveDailyMessage() {
   let date = document.getElementById("msgDate").value;
   let text = document.getElementById("msgText").value;
+  let file = document.getElementById("msgImage").files[0];
 
   if (!date || !text) {
     notify("Enter date & message ❌");
     return;
   }
 
-  try {
-    await db.collection("dailyMessages").doc(date).set({
-      text: text,
-      time: Date.now()
-    });
+  let reader = new FileReader();
 
-    notify("Message saved ✅");
+  reader.onload = async function () {
+    try {
+      await db.collection("dailyMessages").doc(date).set({
+        text: text,
+        image: reader.result || null,
+        time: Date.now()
+      });
 
-  } catch (e) {
-    console.error(e);
-    notify("Error saving ❌");
-  }
+      notify("Message saved ✅");
+      loadSavedMessages();
+
+    } catch (e) {
+      console.error(e);
+      notify("Error saving ❌");
+    }
+  };
+
+  if (file) reader.readAsDataURL(file);
+  else reader.onload();
 }
 
 async function loadSavedMessages() {
@@ -247,7 +257,10 @@ async function loadSavedMessages() {
   if (!container) return;
 
   try {
-    let snapshot = await db.collection("dailyMessages").get();
+    let snapshot = await db
+      .collection("dailyMessages")
+      .orderBy("time", "desc")
+      .get();
 
     container.innerHTML = "";
 
@@ -260,21 +273,30 @@ async function loadSavedMessages() {
       let msg = doc.data();
 
       container.innerHTML += `
-        <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="card message-card">
+
+          <div class="msg-header">
             <strong>${doc.id}</strong>
-            <button class="delete-btn" onclick="deleteMessage('${doc.id}')">
-              🗑
-            </button>
+            <button class="delete-btn" onclick="deleteMessage('${doc.id}')">🗑</button>
           </div>
 
-          <p>${msg.text}</p>
+          <div class="msg-body">
+            <p>${msg.text}</p>
+
+            ${
+              msg.image
+                ? `<img src="${msg.image}" class="msg-img">`
+                : ""
+            }
+          </div>
+
         </div>
       `;
     });
 
   } catch (e) {
-    console.error("Load error:", e);
+    console.error("Error loading messages:", e);
+    container.innerHTML = "<p style='color:red;'>Error loading messages</p>";
   }
 }
 
