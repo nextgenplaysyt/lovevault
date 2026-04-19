@@ -326,22 +326,43 @@ async function loadRegistrationStatus() {
 
   let allowed = doc.exists ? doc.data().allowRegister : true;
 
-  statusEl.innerText = "Status: " + (allowed ? "ON ✅" : "OFF ❌");
+  statusEl.innerHTML =
+    "Status: " +
+    (allowed
+      ? "<span style='color:#4ade80'>ON ✅</span>"
+      : "<span style='color:#f87171'>OFF ❌</span>");
+
   toggle.checked = allowed;
 }
 
 async function toggleRegistrationSwitch() {
   let toggle = el("regToggle");
 
-  let newValue = toggle.checked;
+  try {
+    // 🚫 Disable while loading
+    toggle.disabled = true;
 
-  await db.collection("settings").doc("config").set({
-    allowRegister: newValue
-  });
+    let newValue = toggle.checked;
 
-  loadRegistrationStatus();
+    await db.collection("settings").doc("config").set({
+      allowRegister: newValue
+    });
 
-  notify("Registration " + (newValue ? "enabled ✅" : "disabled ❌"));
+    // 🔊 Sound feedback
+    new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3").play();
+
+    // 🔄 Refresh UI
+    loadRegistrationStatus();
+
+    notify("Registration " + (newValue ? "enabled ✅" : "disabled ❌"));
+
+  } catch (e) {
+    console.error(e);
+    notify("Error ❌");
+  }
+
+  // ✅ Re-enable toggle
+  toggle.disabled = false;
 }
 
 // ===== LOAD =====
