@@ -482,12 +482,18 @@ async function toggleRegistrationSwitch() {
   toggle.disabled = false;
 }
 
-// ===== FLAPPY STYLE GAME =====
+// ===== IMPROVED FLAPPY GAME =====
 
 let canvas, ctx;
-let player, pipes, gravity, velocity, score;
-let gameInterval;
-let gameStarted = false;
+let player, pipes;
+let gravity, velocity;
+let score;
+let gameRunning;
+
+const PIPE_WIDTH = 60;
+const PIPE_SPACING = 220; // distance between pipes
+const PLAYER_SIZE = 20;
+const GAP_SIZE = PLAYER_SIZE * 2; // 1.5–2x size
 
 function startGame() {
   canvas = document.getElementById("gameCanvas");
@@ -503,14 +509,17 @@ function startGame() {
   player = {
     x: 80,
     y: 200,
-    size: 20
+    size: PLAYER_SIZE
   };
 
   pipes = [];
 
-  gameStarted = true;
+  // create first pipe
+  createPipe(canvas.width + 100);
 
-  document.addEventListener("click", flap);
+  gameRunning = true;
+
+  document.onclick = flap;
 
   gameLoop();
 }
@@ -519,8 +528,21 @@ function flap() {
   velocity = -7;
 }
 
+function createPipe(xPos) {
+  let margin = 50;
+
+  let top = Math.random() * (canvas.height - GAP_SIZE - margin * 2) + margin;
+
+  pipes.push({
+    x: xPos,
+    top: top,
+    bottom: top + GAP_SIZE,
+    passed: false
+  });
+}
+
 function gameLoop() {
-  if (!gameStarted) return;
+  if (!gameRunning) return;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -528,7 +550,7 @@ function gameLoop() {
   velocity += gravity;
   player.y += velocity;
 
-  // draw player (blue circle + propeller)
+  // draw player
   ctx.fillStyle = "#60a5fa";
   ctx.beginPath();
   ctx.arc(player.x, player.y, player.size, 0, Math.PI * 2);
@@ -541,45 +563,48 @@ function gameLoop() {
   ctx.lineTo(player.x + 10, player.y - 25);
   ctx.stroke();
 
-  // spawn pipes
-  if (Math.random() < 0.02) {
-    let gap = 120;
-    let top = Math.random() * 250;
+  // handle pipes
+  for (let i = 0; i < pipes.length; i++) {
+    let pipe = pipes[i];
 
-    pipes.push({
-      x: canvas.width,
-      top: top,
-      bottom: top + gap
-    });
-  }
-
-  // move pipes
-  pipes.forEach(pipe => {
     pipe.x -= 2;
 
     // draw pipes
     ctx.fillStyle = "#22c55e";
-    ctx.fillRect(pipe.x, 0, 50, pipe.top);
-    ctx.fillRect(pipe.x, pipe.bottom, 50, canvas.height);
+    ctx.fillRect(pipe.x, 0, PIPE_WIDTH, pipe.top);
+    ctx.fillRect(pipe.x, pipe.bottom, PIPE_WIDTH, canvas.height);
 
     // collision
     if (
-      player.x < pipe.x + 50 &&
       player.x + player.size > pipe.x &&
+      player.x - player.size < pipe.x + PIPE_WIDTH &&
       (player.y - player.size < pipe.top ||
        player.y + player.size > pipe.bottom)
     ) {
       endGame();
     }
 
-    // score
-    if (pipe.x === player.x) {
+    // scoring
+    if (!pipe.passed && pipe.x + PIPE_WIDTH < player.x) {
+      pipe.passed = true;
       score++;
       document.getElementById("score").innerText = score;
     }
-  });
+  }
 
-  // ground collision
+  // remove old pipes
+  if (pipes.length && pipes[0].x < -PIPE_WIDTH) {
+    pipes.shift();
+  }
+
+  // add new pipe (FIXED spacing)
+  let lastPipe = pipes[pipes.length - 1];
+
+  if (lastPipe.x < canvas.width - PIPE_SPACING) {
+    createPipe(canvas.width);
+  }
+
+  // ground / ceiling collision
   if (player.y > canvas.height || player.y < 0) {
     endGame();
   }
@@ -588,11 +613,12 @@ function gameLoop() {
 }
 
 function endGame() {
-  gameStarted = false;
+  gameRunning = false;
   notify("Game Over 💀 Score: " + score);
 
   addCoins(score * 2);
 }
+
 
 // ===== LOAD =====
 window.onload = async function () {
