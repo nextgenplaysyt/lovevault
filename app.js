@@ -287,10 +287,24 @@ function deleteRequest(id) {
   loadAdminRequests();
 }
 
+async function testFirebase() {
+  try {
+    await db.collection("test").add({
+      message: "LoveVault working",
+      time: Date.now()
+    });
+    console.log("Firebase connected ✅");
+  } catch (e) {
+    console.error("Firebase error ❌", e);
+  }
+}
+
 // ===== AUTO LOAD =====
 window.onload = function () {
 
-  let coinEl = el("coinCount");
+  testFirebase(); // 🔥 ADD THIS LINE
+
+  let coinEl = document.getElementById("coinCount");
   if (coinEl) coinEl.innerText = localStorage.getItem("coins");
 
   loadUserRequests();
