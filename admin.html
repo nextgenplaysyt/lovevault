@@ -46,6 +46,16 @@
 
 </main>
 
+<script>
+const links = document.querySelectorAll(".nav-link");
+
+links.forEach(link => {
+  if (window.location.href.includes(link.getAttribute("onclick").split("'")[1])) {
+    link.classList.add("active");
+  }
+});
+</script>
+
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
