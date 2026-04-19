@@ -12,12 +12,19 @@
 
 <body>
 
-<header>
-  <button onclick="goTo('home.html')">⬅ Back</button>
-  <button onclick="logout()">🚪 Logout</button>
-  <h1>🎮 Game</h1>
-  <div>🪙 <span id="coinCount">0</span></div>
-</header>
+<div class="navbar">
+
+  <div class="nav-left">💎 LoveVault</div>
+
+  <div class="nav-right">
+    <span class="nav-link" onclick="goTo('home.html')">Home</span>
+    <span class="nav-link" onclick="goTo('message.html')">Messages</span>
+    <span class="nav-link" onclick="goTo('game.html')">Game</span>
+    <span class="nav-link" onclick="goTo('rewards.html')">Rewards</span>
+    <button onclick="logout()">🚪</button>
+  </div>
+
+</div>
 
 <main>
 
