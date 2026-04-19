@@ -186,6 +186,7 @@ canvas {
 
 input:checked + .slider {
   background-color: #4ade80;
+  box-shadow: 0 0 10px #4ade80, 0 0 20px #4ade80;
 }
 
 input:checked + .slider:before {
