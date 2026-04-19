@@ -26,13 +26,14 @@
 <!-- 🔒 Registration Control -->
 <div class="card">
   <h3>🔒 Registration Control</h3>
-  <button onclick="toggleRegistration()">Toggle Registration</button>
-</div>
 
-<!-- 👥 Users -->
-<div class="card">
-  <h3>👥 Users</h3>
-  <div id="adminUsers"></div>
+  <p id="regStatus">Status: Loading...</p>
+
+  <label class="switch">
+    <input type="checkbox" id="regToggle" onchange="toggleRegistrationSwitch()">
+    <span class="slider"></span>
+  </label>
+
 </div>
 
 </main>
