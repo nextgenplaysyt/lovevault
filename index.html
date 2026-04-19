@@ -39,6 +39,17 @@
 
 <!-- Your app -->
 <script src="./app.js"></script>
+<script>
+auth.onAuthStateChanged(user => {
+  if (user) {
+    if (user.email === "nextgenplaysyt@gmail.com") {
+      window.location.href = "admin.html";
+    } else {
+      window.location.href = "home.html";
+    }
+  }
+});
+</script>
 
 </body>
 </html>
