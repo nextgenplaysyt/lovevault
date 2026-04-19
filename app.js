@@ -44,6 +44,7 @@ async function register() {
     notify("Registered ✅");
   } catch (e) {
     notify("Registration failed ❌");
+    console.error(e);
   }
 }
 
@@ -73,106 +74,139 @@ async function sendRequest() {
 
   if (!name || !cost) return notify("Fill all fields");
 
-  await db.collection("requests").add({
-    name,
-    cost,
-    status: "pending",
-    time: Date.now()
-  });
+  try {
+    await db.collection("requests").add({
+      name,
+      cost,
+      status: "pending",
+      time: Date.now()
+    });
 
-  notify("Request sent 💌");
-  loadUserRequests();
+    notify("Request sent 💌");
+    loadUserRequests();
+  } catch (e) {
+    console.error(e);
+    notify("Error sending request ❌");
+  }
 }
 
 async function loadUserRequests() {
   let container = el("userRequests");
   if (!container) return;
 
-  let snapshot = await db.collection("requests").orderBy("time", "desc").get();
+  try {
+    let snapshot = await db.collection("requests").orderBy("time", "desc").get();
 
-  container.innerHTML = "";
+    container.innerHTML = "";
 
-  snapshot.forEach(doc => {
-    let r = doc.data();
+    snapshot.forEach(doc => {
+      let r = doc.data();
 
-    container.innerHTML += `
-      <div class="card">
-        ${r.name} - ${r.cost} 🪙
-        <br>Status: ${r.status}
-        ${
-          r.status === "pending"
-            ? `<button onclick="cancelRequest('${doc.id}')">Cancel</button>`
-            : ""
-        }
-      </div>
-    `;
-  });
+      container.innerHTML += `
+        <div class="card">
+          ${r.name} - ${r.cost} 🪙
+          <br>Status: ${r.status}
+          ${
+            r.status === "pending"
+              ? `<button onclick="cancelRequest('${doc.id}')">Cancel</button>`
+              : ""
+          }
+        </div>
+      `;
+    });
+
+  } catch (e) {
+    console.error(e);
+    notify("Error loading requests ❌");
+  }
 }
 
 async function cancelRequest(id) {
-  await db.collection("requests").doc(id).delete();
-  loadUserRequests();
+  try {
+    await db.collection("requests").doc(id).delete();
+    loadUserRequests();
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 async function loadAdminRequests() {
   let container = el("adminRequests");
   if (!container) return;
 
-  let snapshot = await db.collection("requests").orderBy("time", "desc").get();
+  try {
+    let snapshot = await db.collection("requests").orderBy("time", "desc").get();
 
-  container.innerHTML = "";
+    container.innerHTML = "";
 
-  snapshot.forEach(doc => {
-    let r = doc.data();
+    snapshot.forEach(doc => {
+      let r = doc.data();
 
-    container.innerHTML += `
-      <div class="card">
-        ${r.name} - ${r.cost} 🪙
-        <br>Status: ${r.status}
+      container.innerHTML += `
+        <div class="card">
+          ${r.name} - ${r.cost} 🪙
+          <br>Status: ${r.status}
 
-        ${
-          r.status === "pending"
-            ? `<button onclick="approveRequest('${doc.id}')">Approve</button>`
-            : ""
-        }
+          ${
+            r.status === "pending"
+              ? `<button onclick="approveRequest('${doc.id}')">Approve</button>`
+              : ""
+          }
 
-        ${
-          r.status === "approved"
-            ? `<button onclick="completeRequest('${doc.id}')">Complete</button>`
-            : ""
-        }
+          ${
+            r.status === "approved"
+              ? `<button onclick="completeRequest('${doc.id}')">Complete</button>`
+              : ""
+          }
 
-        <button onclick="deleteRequest('${doc.id}')">Delete</button>
-      </div>
-    `;
-  });
+          <button onclick="deleteRequest('${doc.id}')">Delete</button>
+        </div>
+      `;
+    });
+
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 async function approveRequest(id) {
-  await db.collection("requests").doc(id).update({ status: "approved" });
-  loadAdminRequests();
+  try {
+    await db.collection("requests").doc(id).update({ status: "approved" });
+    loadAdminRequests();
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 async function completeRequest(id) {
-  let doc = await db.collection("requests").doc(id).get();
-  let cost = doc.data().cost;
+  try {
+    let doc = await db.collection("requests").doc(id).get();
+    let cost = doc.data().cost;
 
-  let coins = await getCoins();
-  coins -= parseInt(cost);
+    let coins = await getCoins();
+    coins -= parseInt(cost);
 
-  await setCoins(coins);
+    await setCoins(coins);
 
-  await db.collection("requests").doc(id).update({
-    status: "completed"
-  });
+    await db.collection("requests").doc(id).update({
+      status: "completed"
+    });
 
-  loadCoins();
-  loadAdminRequests();
+    loadCoins();
+    loadAdminRequests();
+
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 async function deleteRequest(id) {
-  await db.collection("requests").doc(id).delete();
-  loadAdminRequests();
+  try {
+    await db.collection("requests").doc(id).delete();
+    loadAdminRequests();
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 //
@@ -182,19 +216,24 @@ async function deleteRequest(id) {
 async function showMessage() {
   let today = new Date().toISOString().split("T")[0];
 
-  let doc = await db.collection("dailyMessages").doc(today).get();
+  try {
+    let doc = await db.collection("dailyMessages").doc(today).get();
 
-  if (!doc.exists) {
-    el("dailyMessage").innerText = "No message today 💭";
-    return;
+    if (!doc.exists) {
+      el("dailyMessage").innerText = "No message today 💭";
+      return;
+    }
+
+    let msg = doc.data();
+
+    el("dailyMessage").innerHTML = `
+      ${msg.text}<br>
+      ${msg.image ? `<img src="${msg.image}" width="200">` : ""}
+    `;
+
+  } catch (e) {
+    console.error(e);
   }
-
-  let msg = doc.data();
-
-  el("dailyMessage").innerHTML = `
-    ${msg.text}<br>
-    ${msg.image ? `<img src="${msg.image}" width="200">` : ""}
-  `;
 }
 
 function saveDailyMessage() {
@@ -202,15 +241,21 @@ function saveDailyMessage() {
   let text = el("msgText")?.value;
   let file = el("msgImage")?.files[0];
 
+  if (!date || !text) return notify("Fill all fields");
+
   let reader = new FileReader();
 
   reader.onload = async function () {
-    await db.collection("dailyMessages").doc(date).set({
-      text,
-      image: reader.result || null
-    });
+    try {
+      await db.collection("dailyMessages").doc(date).set({
+        text,
+        image: reader.result || null
+      });
 
-    notify("Saved ✅");
+      notify("Saved ✅");
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   if (file) reader.readAsDataURL(file);
@@ -244,18 +289,23 @@ async function loadCoins() {
   coinEl.innerText = coins;
 }
 
-async function checkRegisterAllowed() {
-  let users = await auth.fetchSignInMethodsForEmail("test@gmail.com");
+//
+// ================= REGISTER CONTROL =================
+//
 
-  let btn = document.getElementById("registerBtn");
+function checkRegisterAllowed() {
+  let btn = el("registerBtn");
 
-  if (btn && users.length > 0) {
-    btn.style.display = "none";
-  }
+  auth.onAuthStateChanged(user => {
+    if (btn && user) {
+      btn.style.display = "none";
+    }
+  });
 }
 
 // ===== LOAD =====
 window.onload = async function () {
+  checkRegisterAllowed();
   loadCoins();
   loadUserRequests();
   loadAdminRequests();
