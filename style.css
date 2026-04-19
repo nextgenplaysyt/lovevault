@@ -305,12 +305,6 @@ input:checked + .slider:before {
   transform: translateX(24px);
 }
 
-.card button {
-  width: auto;
-  padding: 6px 10px;
-  font-size: 14px;
-}
-
 .delete-btn {
   background: transparent;
   border: none;
