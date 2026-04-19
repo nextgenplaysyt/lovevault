@@ -6,11 +6,27 @@ html, body {
 }
 
 header button {
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.15);
   color: white;
-  padding: 6px 12px;
-  border-radius: 8px;
+  padding: 6px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.25s ease;
+  backdrop-filter: blur(8px);
+}
+
+/* Hover effect */
+header button:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: gold;
+  box-shadow: 0 0 10px rgba(255,215,0,0.3);
+  transform: translateY(-1px);
+}
+
+/* Click effect */
+header button:active {
+  transform: scale(0.95);
 }
 
 /* ===== BASE ===== */
