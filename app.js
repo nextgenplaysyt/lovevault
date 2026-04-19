@@ -316,10 +316,39 @@ async function deleteUser(uid) {
   loadUsers();
 }
 
+async function loadRegistrationStatus() {
+  let statusEl = el("regStatus");
+  let toggle = el("regToggle");
+
+  if (!statusEl || !toggle) return;
+
+  let doc = await db.collection("settings").doc("config").get();
+
+  let allowed = doc.exists ? doc.data().allowRegister : true;
+
+  statusEl.innerText = "Status: " + (allowed ? "ON ✅" : "OFF ❌");
+  toggle.checked = allowed;
+}
+
+async function toggleRegistrationSwitch() {
+  let toggle = el("regToggle");
+
+  let newValue = toggle.checked;
+
+  await db.collection("settings").doc("config").set({
+    allowRegister: newValue
+  });
+
+  loadRegistrationStatus();
+
+  notify("Registration " + (newValue ? "enabled ✅" : "disabled ❌"));
+}
+
 // ===== LOAD =====
 window.onload = async function () {
   loadCoins();
   loadUserRequests();
   loadAdminRequests();
   loadUsers();
+  loadRegistrationStatus();
 };
