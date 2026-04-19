@@ -18,7 +18,7 @@ async function login() {
   try {
     let userCred = await auth.signInWithEmailAndPassword(email, password);
 
-    if (userCred.user.email === "yourrealemail@gmail.com") {
+    if (userCred.user.email === "nextgenplaysyt@gmail.com") {
       goTo("admin.html");
     } else {
       goTo("home.html");
