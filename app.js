@@ -482,6 +482,118 @@ async function toggleRegistrationSwitch() {
   toggle.disabled = false;
 }
 
+// ===== FLAPPY STYLE GAME =====
+
+let canvas, ctx;
+let player, pipes, gravity, velocity, score;
+let gameInterval;
+let gameStarted = false;
+
+function startGame() {
+  canvas = document.getElementById("gameCanvas");
+  ctx = canvas.getContext("2d");
+
+  canvas.width = 400;
+  canvas.height = 500;
+
+  gravity = 0.4;
+  velocity = 0;
+  score = 0;
+
+  player = {
+    x: 80,
+    y: 200,
+    size: 20
+  };
+
+  pipes = [];
+
+  gameStarted = true;
+
+  document.addEventListener("click", flap);
+
+  gameLoop();
+}
+
+function flap() {
+  velocity = -7;
+}
+
+function gameLoop() {
+  if (!gameStarted) return;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // gravity
+  velocity += gravity;
+  player.y += velocity;
+
+  // draw player (blue circle + propeller)
+  ctx.fillStyle = "#60a5fa";
+  ctx.beginPath();
+  ctx.arc(player.x, player.y, player.size, 0, Math.PI * 2);
+  ctx.fill();
+
+  // propeller
+  ctx.strokeStyle = "white";
+  ctx.beginPath();
+  ctx.moveTo(player.x - 10, player.y - 25);
+  ctx.lineTo(player.x + 10, player.y - 25);
+  ctx.stroke();
+
+  // spawn pipes
+  if (Math.random() < 0.02) {
+    let gap = 120;
+    let top = Math.random() * 250;
+
+    pipes.push({
+      x: canvas.width,
+      top: top,
+      bottom: top + gap
+    });
+  }
+
+  // move pipes
+  pipes.forEach(pipe => {
+    pipe.x -= 2;
+
+    // draw pipes
+    ctx.fillStyle = "#22c55e";
+    ctx.fillRect(pipe.x, 0, 50, pipe.top);
+    ctx.fillRect(pipe.x, pipe.bottom, 50, canvas.height);
+
+    // collision
+    if (
+      player.x < pipe.x + 50 &&
+      player.x + player.size > pipe.x &&
+      (player.y - player.size < pipe.top ||
+       player.y + player.size > pipe.bottom)
+    ) {
+      endGame();
+    }
+
+    // score
+    if (pipe.x === player.x) {
+      score++;
+      document.getElementById("score").innerText = score;
+    }
+  });
+
+  // ground collision
+  if (player.y > canvas.height || player.y < 0) {
+    endGame();
+  }
+
+  requestAnimationFrame(gameLoop);
+}
+
+function endGame() {
+  gameStarted = false;
+  notify("Game Over 💀 Score: " + score);
+
+  addCoins(score * 2);
+}
+
 // ===== LOAD =====
 window.onload = async function () {
   loadCoins();
