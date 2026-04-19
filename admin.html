@@ -36,7 +36,7 @@
 <!-- 🔐 ADMIN PROTECTION -->
 <script>
 auth.onAuthStateChanged(user => {
-  if (!user || user.email !== "yourrealemail@gmail.com") {
+  if (!user || user.email.trim().toLowerCase() !== "nextgenplaysyt@gmail.com") {
     window.location.href = "index.html";
   }
 });
