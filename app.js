@@ -63,8 +63,11 @@ async function register() {
 
 // ===== LOGOUT =====
 function logout() {
-  auth.signOut();
-  goTo("index.html");
+  notify("Logged out 👋");
+  setTimeout(() => {
+    auth.signOut();
+    goTo("index.html");
+  }, 500);
 }
 
 // ===== NOTIFY =====
