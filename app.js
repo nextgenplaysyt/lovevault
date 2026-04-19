@@ -242,6 +242,36 @@ async function saveDailyMessage() {
   }
 }
 
+async function loadSavedMessages() {
+  let container = document.getElementById("savedMessages");
+  if (!container) return;
+
+  try {
+    let snapshot = await db.collection("dailyMessages").get();
+
+    container.innerHTML = "";
+
+    if (snapshot.empty) {
+      container.innerHTML = "<p style='opacity:0.6;'>No messages yet...</p>";
+      return;
+    }
+
+    snapshot.forEach(doc => {
+      let msg = doc.data();
+
+      container.innerHTML += `
+        <div class="card">
+          <strong>${doc.id}</strong><br><br>
+          ${msg.text}
+        </div>
+      `;
+    });
+
+  } catch (e) {
+    console.error("Load error:", e);
+  }
+}
+
 //
 // ================= COINS =================
 //
@@ -378,4 +408,5 @@ window.onload = async function () {
   loadAdminRequests();
   loadUsers();
   loadRegistrationStatus();
+  loadSavedMessages();
 };
