@@ -490,10 +490,10 @@ let gravity, velocity;
 let score;
 let gameRunning;
 
-const PIPE_WIDTH = 60;
+const PIPE_WIDTH = 30;
 const PIPE_SPACING = 220; // distance between pipes
 const PLAYER_SIZE = 20;
-const GAP_SIZE = PLAYER_SIZE * 5; // 1.5–2x size
+const GAP_SIZE = PLAYER_SIZE * 7; // 1.5–2x size
 
 function startGame() {
   canvas = document.getElementById("gameCanvas");
